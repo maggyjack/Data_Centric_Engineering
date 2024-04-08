@@ -339,16 +339,27 @@ O4                           & 0.179899            & 17.979798                  
 
 \section{Discussion}
 
-From the plots of recirculation length in Fig.~\ref{fig:recirc_orig} and \ref{fig:recirc_optim}, it can be seen that the emulator was able to predict a range of values that mostly lie within the accepted values for the backwards facing step.
+From the plots of recirculation length in Fig.~\ref{fig:recirc_orig} and \ref{fig:recirc_optim}, it can be seen that the emulator was able to predict a range of values that mostly lie within the accepted values for the backwards facing step \cite{chen_review_2018}. The emulator was also able to demonstrate its ability to quantify the uncertainty in predictions through plots of standard deviation. In addition to this, the use of the acquisition function was successful at improving the quality of the overall model, shown through improvements in the recirculation length plot and in the reduction of the standard deviation.
 
-\clearpage
+From the plot of recirculation length resulting from the first 20 samples, shown in Fig.~\ref{fig:recirc_orig}, it can be seen that the emulator predicts a mostly linear 'ridge' of longer recirculation zones as the turbulent kinetic energy intensity and inlet velocity increase together. This falls in line with what would be expected, as the free stream velocity will drag the recirculation bubble out further. However, it could be argued that an increase in turbulent kinetic energy would result in the shear layer mixing faster with the recirculation bubble, resulting in a shorter reattachment length. This figure also has several parts that generate some questions and interest. Firstly, there is a darker (shorter) patch in the top half of the plot, and secondly, two of the corners have hit the colour map limit. The dark area is likely the model returning to the prior mean of 0, and this is corroborated by the higher standard deviation in this area shown in Fig.~\ref{fig:std_orig}. The expected improvement picks up on both of these metrics well, showing a clear region and peak for the next point to be evaluated in Fig.~\ref{fig:ei_orig}.
+
+The optimisation steps shown in Fig.~\ref{fig:recirc_optim} demonstrate how the model changes with the addition of new and efficiently placed samples. The first optimisation step in Fig.~\ref{fig:recirc_1} shows a shrinkage of the dark patch and introduces changes along the bottom edge of the plot. This change does not carry over to the standard deviation plot which remains very similar in Fig.~\ref{fig:std_1}. However, examining the values on the colour bar, it can be seen that with each optimisation step, there is a reduction in the standard deviation values. With the 3rd and 4th optimisation steps, the standard deviation is lowered significantly across the whole plot, bar the bottom right corners. The high values seen in the bottom right corners of Fig.~\ref{fig:recirc_optim} represents a limitation of this implementation, where the true values are between 20-50. This shows the model does not have an understanding of the physical limits of the data it is representing, and in regions where the function carries on along the same gradient it left the last training point at. For this reason, it may be advisable to evaluate problems on a larger range than needed, and subsequently using just the inner portions of the models range where it is unaffected by a lack of samples near the edges. The lack of physical understanding may be remedied by the inclusion of prior knowledge which would likely reduce these issues, however this went beyond the scope of this project hence its exclusion.
+
+From Fig.~\ref{fig:ei_optim}, it can easily be seen that the acquisition function was successful at choosing new spots to evaluate where the previous iteration had a low recirculation length as the model returned to a mean of 0 and where there was a higher standard deviation. In the context of CFD, where simulations are very time and energy intensive, the addition of this function represents a step in the efficiency of building an emulator when compared to purely stochastic sampling.
+
+This model suffered due to the choice of the inlet velocity range, which meant that the majority of the sample space was operating in conditions that lend themselves to a stable recirculation area. This meant the model was attempting to predict very small changes in the wider sample space. To improve this project, instead of using inlet velocity as an input, a more appropriate choice would be the Reynolds number at the inlet. This would make the whole problem physically dimensionless and mean the flow characteristics could be easily controlled.
+
+
 \section{Conclusion}
+This paper has effectively reviewed and implemented surrogate modelling methods to build an emulator for the CFD analysis of the backwards facing step flow problem. This utilised state-of-the-art methods implemented via the toolbox \texttt{sciKitLearn} to map the input to output. There were also learnings into the efficient implementation of these methods, which were mainly around the generation and handling of raw data to ensure the model has the best chance of predicting correct and accurate results. This paper also demonstrated the power of active optimisation via use of acquisition functions, showing a decrease in the standard deviation of the model and an improvement in the overall model.
+
+This project was also a successful group project, with all members contributing equally to the project. For the literature review and data gathering, the workload was split evenly and each member completed their work in a timely manner and to a high standard. For the implementation, the group all brought different parts to the table, resulting in a well applied end result.
 
 
-\printbibliography
 \clearpage
+\printbibliography
 
-\section{Appendix}
+\appendix{Code Implementation}
 
 \lstinputlisting[language=Python, caption= Latin Hypercube Sampler Code]{LHS.py}
 
